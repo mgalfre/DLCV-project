@@ -26,4 +26,4 @@ This repository contains the notebooks, python files and data folders created fo
 
 
 Here below a sample image for each of the 10 aves species we selected.
-![pictures_example](#attachment:plots/pictures_example.pdf)
+![image](https://github.com/mgalfre/DLCV-project/plots/pictures_example.pdf,raw=true)
