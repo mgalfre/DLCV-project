@@ -23,3 +23,7 @@ This repository contains the notebooks, python files and data folders created fo
     - `Faster_inference.ipynb`: jupyter notebook containing the inference code for Faster R-CNN
 6. Yolov7:
     - `YOLO_training_inference.ipynb`: jupyter notebook containing the training and inference code for YOLOv7
+
+
+Here below a sample image for each of the 10 aves species we selected.
+![image](#plots/pictures_example.pdf)
