@@ -26,4 +26,4 @@ This repository contains the notebooks, python files and data folders created fo
 
 
 Here below a sample image for each of the 10 aves species we selected.
-![image](#plots/pictures_example.pdf)
+![pictures_example](#attachment:plots/pictures_example.pdf)
