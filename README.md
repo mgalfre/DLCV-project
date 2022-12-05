@@ -24,6 +24,14 @@ This repository contains the notebooks, python files and data folders created fo
 6. Yolov7:
     - `YOLO_training_inference.ipynb`: jupyter notebook containing the training and inference code for YOLOv7
 
+## Our Task:
+- Object Detection
 
+## Dataset
+---
+The dataset was retrieved on [Kaggle](#https://www.kaggle.com/competitions/inaturalist-challenge-at-fgvc-2017/overview) and we decided to focus on the Aves species. We divided the dataset in the following way:
+- Training: 22000 images and 25000 boxes (check!)
+- Validation: 22000 images and 3000 boxes (check!)
+- Test: 22000 images and 3000 boxes (check!)
 Here below a sample image for each of the 10 aves species we selected.
 ![image](/plots/pictures_example.pdf?raw=true)
