@@ -16,7 +16,7 @@ This repository contains the notebooks, python files and data folders created fo
     - `Aves`: folder containing examples of the original photos divided in our 10 selected species
     - `data`: folder containing original original colored images and labels, both divided in Train, Val, Test folders
     - `data_bw`: folder containing black and white images and respective labels, divided in Train, Val, Test folders
-    - `colorized`: folder containing examples of colorized images obtained with DeOldify GAN
+    - `colorized`: folder containing examples of colorized images obtained with DeOldify GAN and respective labels
     - `pickles`: folder containing pickles of the final dataframes for Train, Dev and Test, obtained in the _data_processing.ipynb_ notebook
     - `yaml`: folder containing the _yaml_ files we used for training and testing YOLOv7
     - `runs`: folder containing train, val, and test obtained with yolo
