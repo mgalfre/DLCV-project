@@ -2,6 +2,15 @@
 # Final Group Project 
 #### _Group 5_: Bagnara Arturo Mario 3188256, Galfrè Michela 3076847, Marchetti Simone 3185524, Marcianò Tancredi 3070110
 
+## Our Task
+- Object Detection
+
+## Dataset
+The dataset was retrieved on [Kaggle](https://www.kaggle.com/c/inaturalist-challenge-at-fgvc-2017) and we decided to focus on the Aves species. We divided the dataset in the following way:
+- Training: 22000 images and 25000 boxes (check!)
+- Validation: 22000 images and 3000 boxes (check!)
+- Test: 22000 images and 3000 boxes (check!)
+
 This repository contains the notebooks, python files and data folders created for the Final Group Project of the Deep Learning for Computer Vision course. They are organized as follows:
 1. Data:
     - `Aves`: folder containing examples of the original photos divided in our 10 selected species
@@ -9,6 +18,7 @@ This repository contains the notebooks, python files and data folders created fo
     - `data_bw`: folder containing black and white images and respective labels, divided in Train, Val, Test folders
     - `colorized`: folder containing examples of colorized images obtained with DeOldify GAN
     - `pickles`: folder containing pickles of the final dataframes for Train, Dev and Test, obtained in the _data_processing.ipynb_ notebook
+    - `yaml`: folder containing the _yaml_ files we used for training and testing YOLOv7
 2. SATM:
     - `preprocess.py`: set of functions used to handle and preprocess data from iNaturalis dataset
     - `dataset.py`: set of methods and classes used in the datasets creation for training Faster R-CNN model
@@ -24,15 +34,3 @@ This repository contains the notebooks, python files and data folders created fo
 6. YOLOv7:
     - `YOLO_training_inference.ipynb`: jupyter notebook containing the training and inference code for YOLOv7
     - `yolov7`: cloned official YOLOv7 repository from [Wong Kin Yiu](https://github.com/WongKinYiu/yolov7.git)
-
-## Our Task
-- Object Detection
-
-## Dataset
-The dataset was retrieved on [Kaggle](https://www.kaggle.com/c/inaturalist-challenge-at-fgvc-2017) and we decided to focus on the Aves species. We divided the dataset in the following way:
-- Training: 22000 images and 25000 boxes (check!)
-- Validation: 22000 images and 3000 boxes (check!)
-- Test: 22000 images and 3000 boxes (check!)
-
-Here below a sample image for each of the 10 aves species we selected.
-![image](/plots/pictures_example.pdf?raw=true)
