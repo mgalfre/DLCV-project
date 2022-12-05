@@ -7,9 +7,9 @@
 
 ## Dataset
 The dataset was retrieved from [Kaggle](https://www.kaggle.com/c/inaturalist-challenge-at-fgvc-2017) and we decided to focus on the Aves species. We divided the dataset in the following way:
-- _Training_: 17805 images and 20464 boxes 
-- _Validation_: 2224 images and 2559 boxes 
-- _Test_: 2228 images and 2613 boxes 
+- _Training_: 17,805 images and 20464 boxes 
+- _Validation_: 2,224 images and 2559 boxes 
+- _Test_: 2,228 images and 2613 boxes 
 
 This repository contains the notebooks, python files and data folders created for the Final Group Project of the Deep Learning for Computer Vision course. They are organized as follows:
 1. Data:
