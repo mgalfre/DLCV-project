@@ -7,6 +7,10 @@ import os
 from tqdm.notebook import tqdm
 import matplotlib.pyplot as plt
 import seaborn as sn
+import random
+import matplotlib.patches as patches
+import warnings
+warnings.simplefilter("ignore")
 
 if torch.cuda.is_available():    
     device = torch.device("cuda")
@@ -56,11 +60,8 @@ def get_batch_statistics(outputs, targets, iou_threshold):
             continue
 
         output = outputs[sample_i] # predict
-        # pred_boxes = output['boxes']
-        # pred_scores = output['scores']
-        # pred_labels = output['labels']
 
-        true_positives = torch.zeros(output['boxes'].shape[0])   # 예측 객체 개수 (number of predicted objects)
+        true_positives = torch.zeros(output['boxes'].shape[0])   #(number of predicted objects)
  
         annotations = targets[sample_i]  # actual
         target_labels = annotations['labels'] if len(annotations) else []
@@ -227,7 +228,43 @@ def compute_ap(recall, precision):
     ap = np.sum((mrec[i + 1] - mrec[i]) * mpre[i + 1])
     return ap
 
-def pred_cm(model,data_loader):
+
+def compute_mAP(dataloader, model, conf, iou):
+    """
+    This function computes the mean Average Precision across classes for the input model
+    """
+    labels = []
+    preds_adj_all = []
+    annot_all = []
+
+    for im, annot, _ in tqdm(dataloader, position = 0, leave = True):
+        im = list(img.to(device) for img in im)
+
+        for t in annot:
+            labels += t['labels']
+
+        with torch.no_grad():
+            preds_adj = make_prediction(model, im, conf)
+            preds_adj = [{k: v.to(torch.device('cpu')) for k, v in t.items()} for t in preds_adj]
+            preds_adj_all.append(preds_adj)
+            annot_all.append(annot)
+
+    sample_metrics = []
+    for batch_i in range(len(preds_adj_all)):
+        sample_metrics += get_batch_statistics(preds_adj_all[batch_i], annot_all[batch_i], iou_threshold=iou)
+
+    true_positives, pred_scores, pred_labels = [torch.cat(x, 0) for x in list(zip(*sample_metrics))]
+
+    precision, recall, AP, f1, ap_class, precision_curve, recall_curve = ap_per_class(true_positives, pred_scores, pred_labels,     torch.tensor(labels))
+    
+    return torch.mean(AP)
+
+
+def pred_cm(model, data_loader):
+    """Compute predictions used for the confusion matrix. The function unzip the batches and returns as outputs two dictionaries:
+    - dict_ground_truth : dictinary that contains as keys the image identifier and as values the true annotations
+    - 
+    """
     
     # storing results
     dict_ground_truth = dict()
@@ -242,11 +279,11 @@ def pred_cm(model,data_loader):
             id_ = identifier[i]
             annotation_image = annot[i]
             dict_ground_truth[id_] = {}
-            dict_ground_truth[id_]["labels"] = annot[0]["labels"]
-            dict_ground_truth[id_]["boxes"] = annot[0]["boxes"]
+            dict_ground_truth[id_]["labels"] = annotation_image["labels"]
+            dict_ground_truth[id_]["boxes"] = annotation_image["boxes"]
 
             with torch.no_grad():
-                preds_adj = make_prediction(model, [im[i]], 0.5)
+                preds_adj = make_prediction(model, [im[i]], 0.3)
                 preds_adj = [{k: v.to(torch.device('cpu')) for k, v in t.items()} for t in preds_adj]
                 dict_result[id_] = preds_adj[0]
     
@@ -254,6 +291,9 @@ def pred_cm(model,data_loader):
 
 
 def create_confusion_matrix(dict_ground_truth, dict_result, nclasses):
+    """
+    This function creates the confusion matrix for the Faster R-CNN model
+    """
     
     confusion_matrix = pd.DataFrame(np.zeros((nclasses+1,nclasses+1)), columns = np.arange(1,nclasses+2))
     confusion_matrix.set_index(np.arange(1,nclasses+2), inplace = True)
@@ -279,7 +319,7 @@ def create_confusion_matrix(dict_ground_truth, dict_result, nclasses):
                 if len(iou_dict) == 0:
                     continue
                 max_ = max(iou_dict, key = iou_dict.get)
-                if iou_dict[max_] < 0.25:
+                if iou_dict[max_] < 0.5:
                     confusion_matrix.loc[nclasses+1,label.item()] += 1 
                     continue
                 box_to_compare_with.pop(max_)
@@ -301,17 +341,21 @@ def create_confusion_matrix(dict_ground_truth, dict_result, nclasses):
     final_confusion = final_confusion.iloc[0:nclasses+1,0:nclasses+1]
     
     plt.figure(figsize = (10,8))
-    plt.title("Confusion Matrix")
+    #plt.title("Confusion Matrix")
     sn.heatmap(round(final_confusion,2), annot=True,  cmap="Blues")
     plt.ylabel('Predicted')
     plt.xlabel('True')
     plt.xticks(rotation=90)
+    plt.savefig('cm_faster.pdf',transparent=True,bbox_inches = 'tight')
     plt.tight_layout()
             
     return final_confusion
 
 
 def epoch_eval(model_dir,data_loader):
+    """
+    This function computes different evaluation metrics across 4 epochs
+    """
     
     mPrecisions = []
     mRecalls = []
@@ -337,7 +381,7 @@ def epoch_eval(model_dir,data_loader):
                 labels += t['labels']
 
             with torch.no_grad():
-                preds_adj = make_prediction(model_epoch, im, 0.5)
+                preds_adj = make_prediction(model_epoch, im, 0.3)
                 preds_adj = [{k: v.to(torch.device('cpu')) for k, v in t.items()} for t in preds_adj]
                 preds_adj_all.append(preds_adj)
                 annot_all.append(annot)
@@ -359,6 +403,8 @@ def epoch_eval(model_dir,data_loader):
 
 
 def plot_epoch_eval(model_dir, mPrecisions, mRecalls, mAPs, mF1s):
+    """ This function plots the evaluation metrics across different epochs"""
+    
     plt.figure(figsize=(8,6))
     epochs = range(1,len(os.listdir(model_dir))+1)
     plt.title("Test Performances")
@@ -370,3 +416,68 @@ def plot_epoch_eval(model_dir, mPrecisions, mRecalls, mAPs, mF1s):
     plt.xticks([1,2,3,4])
     plt.legend()
     plt.tight_layout()
+    
+    
+
+def plot_pred(dict_ground_truth,dict_result,dir_='data/images'):
+    """
+    This function plots the true image and box and the predective boxes
+    """
+    # colors list and dict to plot the box 
+    colors = ["red", "orange", "gold", "lawngreen", "green", "steelblue", "blue", "darkviolet", "magenta", "pink"]
+    dict_colors = {i+1:c for i, c in enumerate(colors)}
+    
+    dict_cat2colors = {}
+    for i,j in zip(enc2cat.values(),dict_colors.values()):
+        dict_cat2colors[i] = j
+    
+    flag = True
+    while flag:
+        try:
+            id_, annot_list = random.choice(list(dict_ground_truth.items()))
+            pred_annot_list = dict_result[id_]
+
+            im = plt.imread(f"{dir_}/Val/{id_}")
+
+            #print("Target: ", enc2cat[int(annot_list['labels'])])
+            cat_target = [enc2cat[int(i)] for i in annot_list['labels']]
+            #cat_target = enc2cat[int(annot_list['labels'])]
+
+            fig,ax = plt.subplots(1,2)
+            fig.set_figheight(7)
+            fig.set_figwidth(10)
+
+            ax[0].imshow(im)
+            for idx in range(len(annot_list["boxes"])):
+                cat = cat_target[idx]
+                xmin, ymin, xmax, ymax = annot_list["boxes"][idx]
+                rect = patches.Rectangle((xmin,ymin),(xmax-xmin),(ymax-ymin),linewidth=1,edgecolor=dict_cat2colors[cat],facecolor='none')
+                
+
+                ax[0].add_patch(rect)
+                props = dict(boxstyle='square', edgecolor=dict_cat2colors[cat], facecolor=dict_cat2colors[cat], alpha=1)
+                ax[0].text(xmin+9, ymin-9, cat_target, verticalalignment='bottom', horizontalalignment = "left", fontsize=5, bbox=props, color = "white", weight = "bold")
+
+            ax[1].imshow(im)
+            #print("Pred: ", enc2cat[int(pred_annot_list['labels'])])
+            cat_pred = [enc2cat[int(i)] for i in pred_annot_list['labels']]
+
+            for idx in range(len(pred_annot_list["boxes"])):
+                cat = cat_pred[idx]
+                xmin, ymin, xmax, ymax = pred_annot_list["boxes"][idx]
+
+                rect = patches.Rectangle((xmin,ymin),(xmax-xmin),(ymax-ymin),linewidth=1,edgecolor=dict_cat2colors[cat],facecolor='none')
+
+                ax[1].add_patch(rect)
+                props = dict(boxstyle='square', edgecolor=dict_cat2colors[cat], facecolor=dict_cat2colors[cat], alpha=1)
+                ax[1].text(xmin+9, ymin-9, cat_pred, verticalalignment='bottom', horizontalalignment = "left", fontsize=5, bbox=props, color = "white", weight = "bold")
+                
+            
+            plt.savefig('pred_faster.png',transparent=True)
+            plt.show()
+            flag=False
+        
+        except Exception as e:
+            print(e)
+            continue
+
