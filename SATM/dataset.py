@@ -10,6 +10,8 @@ from torch.utils.data.sampler import Sampler
 from torchvision import transforms, datasets, models
 import cv2
 import random
+from PIL import Image
+import matplotlib.patches as patches
 
 ##################################### DATASET CLASSES #########################################################################################################
 
@@ -119,9 +121,10 @@ class AvesAugmentationDataset(Dataset):
 class AvesDataset(object):
     def __init__(self, transforms, path,  df): #maybe use explicit variable for train and test
         '''
-        path: path to train folder or test folder
-        df: dataframe to take info of box from
-        train: if train or not
+        Dataset class, takes as inputs:
+        - path: path to train folder or test folder
+        - df: dataframe to take info of box from
+        - transform: lists of transformations to apply stochastically
         '''
         # define the path to the images and what transform will be used
         self.transforms = transforms
@@ -152,12 +155,15 @@ class AvesDataset(object):
         return len(self.imgs)   
     
 
-class AvesStochAugDataset(Dataset):
-    def __init__(self, path, transform, df, labels, prop_aug = 0.3, balanced = True): #maybe use explicit variable for train and test
+class AvesStochAugDataset(Dataset):    
+    def __init__(self, path, transform, df, labels, prop_aug = 0.3): #maybe use explicit variable for train and test
         '''
-        path: path to train folder or test folder
-        df: dataframe to take info of box from
-        train: if train or not
+        Dataset class, takes as inputs:
+        - path: path containing dataset images
+        - transform: lists of transformations to apply stochastically
+        - df: dataframe containing the dataset information
+        - labels: list of labels ordered in same order as images in the path
+        - prop_aug: probability of applying augmentation
         '''
         # define the path to the images and what transform will be used
         
@@ -234,51 +240,75 @@ class AvesStochAugDataset(Dataset):
         return result_image, result_target
      
 
-##################################### SAMPLER CLASSES #########################################################################################################
+##################################### SAMPLER CLASS ###########################################################################################################
 
-        
 class SATMsampler(Sampler):
     """
     Create an equally balanced sampler, which allows for both undersampling and oversampling.
+    Takes an input:
+    - datasource: input dataset;
+    - size: desired number of samples;
+    - labels: list of image labels in the same order of the images. 
+    - num_aug: number of augmentations to apply to each image
     """
     
-    def __init__(self, data_source, size, labels):
+    def __init__(self, data_source, size, labels, num_aug):
         self.data_source = data_source
+        self.labels = labels
         self.size = size
-        if self.size > len(data_source):
+        self.num_labels = len(set(self.labels))
+        self.num_aug = num_aug 
+        self.per_classes_samples = {l: list(self.labels[self.labels==l].index) for l in set(self.labels)}
+        self.no_oversampling_classes = []
+        
+        for l,s in self.per_classes_samples.items():
+            if len(s) > self.size // self.num_labels:
+                self.no_oversampling_classes.append(l)
+        if len(self.no_oversampling_classes) == 0:
             self.oversampling = True
         else:
             self.oversampling = False
-        self.labels = labels
+
         self.classes_dict = {i:0 for i in range(len(set(self.labels)))}
-        self.per_classes_samples = {l: list(self.labels[self.labels==l].index) for l in set(self.labels)}
-        self.augmenting = {l: list(self.labels[self.labels==l].index) for l in set(self.labels)}
-        self.random_sample = [self.sample_idx() for idx in range(self.size)]
-        #self.curr_iter = None
+        random_sample = [self.sample_idx() for idx in range(self.size)]*self.num_aug # the balanced sample of images
+        random.shuffle(random_sample)
+        self.random_sample = random_sample
+        print("Sampler size:",len(random_sample), f"({self.size} x {self.num_aug} augmentations)")
                     
     def sample_idx(self):
+        """
+        Method to sample an image uniformly between labels.
+        """
         random_class = random.randint(0,9)
         self.classes_dict[random_class] += 1
         idx = random.choice(self.per_classes_samples[random_class])
-        if idx in set(self.augmenting[random_class]):
-            self.augmenting[random_class].remove(idx)
         if not self.oversampling:
-            self.per_classes_samples[random_class].remove(idx)
+            if random_class in set(self.no_oversampling_classes):
+                self.per_classes_samples[random_class].remove(idx)
         return idx    
             
     def __iter__(self):
-        #if not self.curr_iter:
-        #    self.curr_iter = 0   
-        #self.curr_iter += 1
+        """
+        Iter special method.
+        """
         return iter(self.random_sample)
 
     def __len__(self):
-        return self.size
+        """
+        Len special method.
+        """
+        return self.size*self.num_aug
     
     def class_prop(self):
+        """
+        Dictionary storing the distribution among sampled labels.
+        """
         return {i:j/sum(self.classes_dict.values()) for i,j in self.classes_dict.items()}
     
     def reset(self):
+        """
+        Reset the sampler.
+        """
         self.classes_dict = {i:0 for i in range(len(set(self.labels)))}
         self.random_sample = [self.sample_idx() for idx in range(self.size)]
         self.per_classes_samples = {l: list(labels[labels==l].index) for l in set(self.labels)}
