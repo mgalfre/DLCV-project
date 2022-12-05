@@ -7,9 +7,9 @@
 
 ## Dataset
 The dataset was retrieved from [Kaggle](https://www.kaggle.com/c/inaturalist-challenge-at-fgvc-2017) and we decided to focus on the Aves species. We divided the dataset in the following way:
-- Training: 17805 images and 20464 boxes 
-- Validation: 2224 images and 2559 boxes 
-- Test: 2228 images and 2613 boxes 
+- _Training_: 17805 images and 20464 boxes 
+- _Validation_: 2224 images and 2559 boxes 
+- _Test_: 2228 images and 2613 boxes 
 
 This repository contains the notebooks, python files and data folders created for the Final Group Project of the Deep Learning for Computer Vision course. They are organized as follows:
 1. Data:
@@ -26,7 +26,7 @@ This repository contains the notebooks, python files and data folders created fo
 3. Plots:
     - `plots`: folder containing plots obtained in the inference phase for our models
 4. Data preprocessing and visualization:
-    - `data_processing.ipynb`: jupyter notebook of initial preprocessing steps to obtained the final dataframes we will use for our modles
+    - `data_processing.ipynb`: jupyter notebook of initial preprocessing steps to obtaine the final dataframes we will use for our modles
     - `data_visualization.ipynb`: jupyter notebook for exploratory analysis and visualization
 5. Faster R-CNN:
     - `Faster_training.ipynb`: jupyter notebook containing the training code for Faster R-CNN 
