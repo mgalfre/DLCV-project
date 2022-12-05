@@ -21,8 +21,9 @@ This repository contains the notebooks, python files and data folders created fo
 5. Faster R-CNN:
     - `Faster_training.ipynb`: jupyter notebook containing the training code for Faster R-CNN 
     - `Faster_inference.ipynb`: jupyter notebook containing the inference code for Faster R-CNN
-6. Yolov7:
+6. YOLOv7:
     - `YOLO_training_inference.ipynb`: jupyter notebook containing the training and inference code for YOLOv7
+    - `yolov7`: cloned official YOLOv7 repository from [Wong Kin Yiu](https://github.com/WongKinYiu/yolov7.git)
 
 ## Our Task
 - Object Detection
