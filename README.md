@@ -23,6 +23,7 @@ This repository contains the notebooks, python files and data folders created fo
     - `preprocess.py`: set of functions used to handle and preprocess data from iNaturalis dataset
     - `dataset.py`: set of methods and classes used in the datasets creation for training Faster R-CNN model
     - `inference.py`: set of methods and classes broadly used in the inference phase of the project
+    - `runs`: folder containing train, val, and test obtained with yolo
 3. Plots:
     - `plots`: folder containing plots obtained in the inference phase for our models
 4. Data preprocessing and visualization:
