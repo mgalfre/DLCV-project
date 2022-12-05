@@ -2,7 +2,7 @@
 # Final Group Project 
 #### _Group 5_: Bagnara Arturo Mario 3188256, Galfrè Michela 3076847, Marchetti Simone 3185524, Marcianò Tancredi 3070110
 
-## Our Task
+## Task
 - Object Detection
 
 ## Dataset
