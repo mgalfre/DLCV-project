@@ -1,0 +1,15 @@
+train: data_bw/images/Train
+val: data_bw/images/Val
+test: data_bw/images/Test
+nc: 10
+names:
+  0: Ardea alba
+  1: Melospiza melodia
+  2: Buteo jamaicensis
+  3: Pandion haliaetus
+  4: Junco hyemalis
+  5: Zenaida macroura
+  6: Cardinalis cardinalis
+  7: Picoides pubescens
+  8: Agelaius phoeniceus
+  9: Ardea herodias
