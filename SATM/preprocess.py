@@ -186,6 +186,10 @@ def generate_txt(identifier, transformed, v):
 
             
 def generate_box(l):
+    """
+    this function generates the bboxes in the required format
+    computing the upper left corner and the lower right one
+    """
     xmin = l[0]
     xmax = xmin +l[2]
     ymin = l[1]
@@ -193,6 +197,7 @@ def generate_box(l):
     return [xmin, ymin, xmax, ymax]
     
 def generate_target(df):
+    
     boxes = []
     labels = []
     for i in range(df.shape[0]):
@@ -268,9 +273,12 @@ class AvesDataset(object):
     
     
     
-    
+# CLIP functions    
     
 def plot_images(images):
+    """
+    this function plots vectorized images in the embedding space
+    """
     if isinstance(images, list) and len(images) > 1:
         fig, axes = plt.subplots(nrows=1, ncols=len(images), figsize=(12,8))
         for ax, im in zip(axes, images):
@@ -292,6 +300,9 @@ def plot_images(images):
             
 
 def scatter_with_pca(texts, images):
+    """
+    this function produces a scatter plots with the vectorized image
+    """
     if not isinstance(images, list):
         images = [images]
 
@@ -323,10 +334,16 @@ def scatter_with_pca(texts, images):
 
 
 def get_image_from_url(url):
+    """
+    get image object from path
+    """
     return Image.open(url).convert("RGB")
     # return Image.open(requests.get(url, stream=True).raw).convert("RGB")
 
 def embed_texts(texts, processor, model):
+    """
+    embeds texts
+    """
     inputs = processor(text=texts, padding="longest")
     input_ids = torch.tensor(inputs["input_ids"])
     attention_mask = torch.tensor(inputs["attention_mask"])
@@ -338,6 +355,9 @@ def embed_texts(texts, processor, model):
     return embeddings
 
 def embed_images(images, processor, model):
+    """
+    embeds images
+    """
     inputs = processor(images=images)
     pixel_values = torch.tensor(np.array(inputs["pixel_values"]))
 
