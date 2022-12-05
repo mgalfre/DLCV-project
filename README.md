@@ -28,7 +28,6 @@ This repository contains the notebooks, python files and data folders created fo
 - Object Detection
 
 ## Dataset
----
 The dataset was retrieved on [Kaggle](#https://www.kaggle.com/competitions/inaturalist-challenge-at-fgvc-2017/overview) and we decided to focus on the Aves species. We divided the dataset in the following way:
 - Training: 22000 images and 25000 boxes (check!)
 - Validation: 22000 images and 3000 boxes (check!)
