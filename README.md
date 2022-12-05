@@ -6,7 +6,7 @@
 - Object Detection
 
 ## Dataset
-The dataset was retrieved on [Kaggle](https://www.kaggle.com/c/inaturalist-challenge-at-fgvc-2017) and we decided to focus on the Aves species. We divided the dataset in the following way:
+The dataset was retrieved from [Kaggle](https://www.kaggle.com/c/inaturalist-challenge-at-fgvc-2017) and we decided to focus on the Aves species. We divided the dataset in the following way:
 - Training: 17805 images and 20464 boxes 
 - Validation: 2224 images and 2559 boxes 
 - Test: 2228 images and 2613 boxes 
