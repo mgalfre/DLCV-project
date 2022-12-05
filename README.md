@@ -19,11 +19,11 @@ This repository contains the notebooks, python files and data folders created fo
     - `colorized`: folder containing examples of colorized images obtained with DeOldify GAN
     - `pickles`: folder containing pickles of the final dataframes for Train, Dev and Test, obtained in the _data_processing.ipynb_ notebook
     - `yaml`: folder containing the _yaml_ files we used for training and testing YOLOv7
+    - `runs`: folder containing train, val, and test obtained with yolo
 2. SATM:
     - `preprocess.py`: set of functions used to handle and preprocess data from iNaturalis dataset
     - `dataset.py`: set of methods and classes used in the datasets creation for training Faster R-CNN model
     - `inference.py`: set of methods and classes broadly used in the inference phase of the project
-    - `runs`: folder containing train, val, and test obtained with yolo
 3. Plots:
     - `plots`: folder containing plots obtained in the inference phase for our models
 4. Data preprocessing and visualization:
