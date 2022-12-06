@@ -37,3 +37,5 @@ This repository contains the notebooks, python files and data folders created fo
 6. YOLOv7:
     - `YOLO_training_inference.ipynb`: jupyter notebook containing the training and inference code for YOLOv7
     - `yolov7`: cloned official YOLOv7 repository from [Wong Kin Yiu](https://github.com/WongKinYiu/yolov7.git)
+7. Report:
+    - `Report.pdf`: our group project report
