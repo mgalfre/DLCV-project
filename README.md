@@ -11,7 +11,7 @@ The dataset was retrieved from [Kaggle](https://www.kaggle.com/c/inaturalist-cha
 - _Validation_: 2,224 images and 2559 boxes 
 - _Test_: 2,228 images and 2613 boxes 
 
-The process we followed to identify our dataset is explained in the `data_processing.ipynb` notebook.
+We decided to focus on the most representative 10 Aves species. The process we followed to identify our dataset is explained in the `data_processing.ipynb` notebook.
 
 This repository contains the notebooks, python files and data folders created for the Final Group Project of the Deep Learning for Computer Vision course. They are organized as follows:
 1. Data:
